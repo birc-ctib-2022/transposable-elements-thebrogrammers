@@ -91,13 +91,15 @@ class ListGenome(Genome):
 
     Implements the Genome interface using Python's built-in lists
     """
-    nucleotide: list[int]
-    active_TE: dict[int,int]
+    nucleotide: list[str]
+    active_TE: dict[int, int]
+    te_id: int
 
     def __init__(self, n: int):
         """Create a new genome with length n."""
-        self.nucleotide = [0]*n
-		
+        self.nucleotide = ["-"]*n
+        self.active_TE = {}
+        self.te_id = 1
 
     def insert_te(self, pos: int, length: int) -> int:
         """
@@ -112,8 +114,16 @@ class ListGenome(Genome):
 
         Returns a new ID for the transposable element.
         """
-        ...  # FIXME
-        return -1
+        if self.nucleotide[pos] in self.active_TE:
+            del self.active_TE[self.nucleotide[pos]]
+
+        for te in range(length):
+            self.nucleotide[pos+te] = "A"
+        te_id, self.te_id = self.te_id, self.te_id+1
+        self.active_TE[te_id] = length
+        self.nucleotide[pos:pos] = [te]*length
+
+        return te_id
 
     def copy_te(self, te: int, offset: int) -> int | None:
         """
