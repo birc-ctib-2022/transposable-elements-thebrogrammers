@@ -117,15 +117,13 @@ class ListGenome(Genome):
         if self.nucleotide[pos] in self.active_TE:
             del self.active_TE[self.nucleotide[pos]]
 
-        for te in range(length):
-            self.nucleotide[pos+te] = "A"
         te_id, self.te_id = self.te_id, self.te_id+1
         self.active_TE[te_id] = length
-        self.nucleotide[pos:pos] = [te]*length
+        self.nucleotide[pos:pos] = [te_id]*length
 
         return te_id
 
-    def copy_te(self, te: int, offset: int) -> int | None:
+    def copy_te(self, te_id: int, offset: int) -> int | None:
         """
         Copy a transposable element.
 
@@ -139,7 +137,7 @@ class ListGenome(Genome):
 
         If te is not active, return None (and do not copy it).
         """
-        ...  # FIXME
+        if te_id not in
 
     def disable_te(self, te: int) -> None:
         """
