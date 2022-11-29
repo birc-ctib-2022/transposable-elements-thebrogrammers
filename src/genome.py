@@ -178,7 +178,10 @@ class ListGenome(Genome):
         represented with the character '-', active TEs with 'A', and disabled
         TEs with 'x'.
         """
-        return "FIXME"
+
+        return "".join(a if a == "-" else
+                       "A" if a in self.active else
+                       "x" for a in self.nucleotide)
 
 
 class LinkedListGenome(Genome):
