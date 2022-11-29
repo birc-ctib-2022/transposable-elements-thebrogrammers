@@ -137,7 +137,14 @@ class ListGenome(Genome):
 
         If te is not active, return None (and do not copy it).
         """
-        if te_id not in
+        if te_id not in self.active_TE:
+            return None
+
+        pos = self.nucleotide.index(te_id)
+        length = self.active_TE[te_id]
+
+        # modulo to fix out of boundsness.
+        return self.insert_te((pos+offset) % len(self.nucleotide), length)
 
     def disable_te(self, te: int) -> None:
         """
