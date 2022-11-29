@@ -191,9 +191,20 @@ class LinkedListGenome(Genome):
     Implements the Genome interface using linked lists.
     """
 
+    nucleotide: list[str]
+    next: list[int]
+    prev: list[int]
+    active_TE: dict[int, int]
+    te_id: int
+
     def __init__(self, n: int):
         """Create a new genome with length n."""
-        ...  # FIXME
+        self.nucleotide = ["-"]*n
+        self.active_TE = {}
+        self.te_id = 1
+
+        self.next = [(i+1) % n for i in range(n)]
+        self.prev = [(i-1) % n for i in range(n)]
 
     def insert_te(self, pos: int, length: int) -> int:
         """
