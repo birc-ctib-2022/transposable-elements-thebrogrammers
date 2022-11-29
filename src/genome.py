@@ -92,11 +92,12 @@ class ListGenome(Genome):
     Implements the Genome interface using Python's built-in lists
     """
     nucleotide: list[int]
-    active_TE: dict{int, int}
+    active_TE: dict[int,int]
 
     def __init__(self, n: int):
         """Create a new genome with length n."""
         self.nucleotide = [0]*n
+		
 
     def insert_te(self, pos: int, length: int) -> int:
         """
