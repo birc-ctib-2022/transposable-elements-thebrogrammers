@@ -154,17 +154,17 @@ class ListGenome(Genome):
         TEs are already inactive, so there is no need to do anything
         for those.
         """
-        ...  # FIXME
+        if te in self.active_TE:
+            del self.active_TE[te]
 
     def active_tes(self) -> list[int]:
         """Get the active TE IDs."""
-        ...  # FIXME
-        return []
+
+        return self.active_TE.keys()
 
     def __len__(self) -> int:
         """Current length of the genome."""
-        ...  # FIXME
-        return 0
+        return len(self.nucleotide)
 
     def __str__(self) -> str:
         """
