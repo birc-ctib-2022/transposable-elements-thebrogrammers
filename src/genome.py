@@ -161,7 +161,7 @@ class ListGenome(Genome):
 	def active_tes(self) -> list[int]:
 		"""Get the active TE IDs."""
 
-		return self.active_TE.keys()
+		return list(self.active_TE.keys())
 
 	def __len__(self) -> int:
 		"""Current length of the genome."""
@@ -181,7 +181,8 @@ class ListGenome(Genome):
 		"""
 
 		return "".join(
-			a if a == "-" else "A" if a in self.active else "x" for a in self.nucleotide
+			a if a == "-" else "A" if a in self.active_TE else "x"
+			for a in self.nucleotide
 		)
 
 
@@ -189,6 +190,7 @@ class Node:
 	def __init__(self, te, next=None, prev=None):
 		self.te = te
 		self.next = next
+		self.te_id = 0
 		# self.prev = prev
 
 
@@ -204,31 +206,37 @@ class LinkedListGenome(Genome):
 
 	def __init__(self, n: int):
 		self.active_TE = {}
-		self.te_id = 0
+		self.next_TE_id = 1
 
 		# init LL Head
 		self.head = Node(0)
 		# self.head.prev = self.head
-		self.head.next = self.head
+		# seriously dont use below, this kills the program.
+		# self.head.next = self.head
 
 		# make genome
-		for _ in range(1, n):
+		for _ in range(n):
 			self.insert(0)
 		self.length = n
+		# burde kunne "cirkuleres" hvis tail bare peger tilbage på head.
+
+	# burde nok ikke gøres uden at lave stops så while loops.
 
 	def insert(self, te):
-		node = Node(te)
-		# no need to head check as head will allways start as 0
-		last = self.head
-		while last.next:
-			last = last.next
-		last.next = node
+		insert = Node(te)
+		# no need to head check as head will allways start as 0, i hope.
+		current = self.head
+		while current.next:
+			current = current.next
+		current.next = insert
 
-	def insert_in(node, te):
+	# inserts after the given node.
+	def insert_in(self, node, te):
 		insert = Node(te)
 		insert.next, node.next = node.next, insert
+		return insert
 
-	def insert_te(self, pos: int, length: int) -> int:
+	def insert_te(self, position: int, length: int) -> int:
 		"""
 		Insert a new transposable element.
 
@@ -242,19 +250,32 @@ class LinkedListGenome(Genome):
 		Returns a new ID for the transposable element.
 		"""
 
-		cur = self.head
-		pos = pos % self.length
-		self.te_id += 1
-		for _ in range(0, pos):
-			cur = cur.next
+		currentNode = self.head
+		position = position % self.length
+		TE_ID = self.next_TE_id
+		# path to node before insertion
+		for _ in range(0, position - 1):
+			currentNode = currentNode.next
+		insertionNode = currentNode
+		# check for TE and disable it
+		for _ in range(0, length):
+			currentNode = currentNode.next
+			if currentNode.te == 1:
+				self.disable_te(currentNode.te_id)
+
+		# insert the TE
+		currentNode = insertionNode
 		for i in range(length):
-			if i == 1:
-				self.active_TE[self.te_id] = [cur, length]
-			cur = self.insert_in(cur, 1)
-		
+			currentNode: Node = self.insert_in(currentNode, 1)  # 1 for active TE
+			currentNode.te_id = TE_ID
+			if i == 0:
+				self.active_TE[TE_ID] = [currentNode, length]
+			
+			
+		# set fields for next TE
+		self.next_TE_id += 1
 		self.length += length
-
-
+		return TE_ID
 
 	def copy_te(self, te: int, offset: int) -> int | None:
 		"""
@@ -281,16 +302,17 @@ class LinkedListGenome(Genome):
 		for those.
 		"""
 
-		cur, length = self.active_TE[te]
+		currentNode: Node = self.active_TE[te][0]
+		length: int = self.active_TE[te][1]
 		for _ in range(length):
-			cur.te = 2
-			cur = cur.next
+			currentNode.te = 2
+			currentNode = currentNode.next
 
 		del self.active_TE[te]
 
 	def active_tes(self) -> list[int]:
 		"""Get the active TE IDs."""
-		return self.active_TE.keys()
+		return list(self.active_TE.keys())
 
 	def __len__(self) -> int:
 		"""Current length of the genome."""
@@ -314,4 +336,13 @@ class LinkedListGenome(Genome):
 		represented with the character '-', active TEs with 'A', and disabled
 		TEs with 'x'.
 		"""
-		return "FIXME"
+		returnString = ""
+		last = self.head
+		while last.next:
+			returnString += "A" if last.te == 1 else "x" if last.te == 2 else "-"
+			last = last.next
+		return returnString
+
+
+# genome = LinkedListGenome(10)
+# print(genome.__str__)
