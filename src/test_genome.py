@@ -48,7 +48,7 @@ def run_genome_test(genome_class: Type[Genome]) -> None:
     assert genome.active_tes() == [2, 5]
 
 
-def est_list_genome() -> None:
+def test_list_genome() -> None:
     """Test that the Python list implementation works."""
     run_genome_test(ListGenome)
 
