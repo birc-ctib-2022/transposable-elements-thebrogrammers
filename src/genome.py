@@ -258,10 +258,9 @@ class LinkedListGenome(Genome):
             currentNode = currentNode.next
         insertionNode = currentNode
         # check for TE and disable it
-        for _ in range(0, length):
-            currentNode = currentNode.next
-            if currentNode.te == 1:
-                self.disable_te(currentNode.te_id)
+        currentNode = currentNode.next
+        if currentNode.te == 1:
+            self.disable_te(currentNode.te_id)
 
         # insert the TE
         currentNode = insertionNode
@@ -329,7 +328,7 @@ class LinkedListGenome(Genome):
         # set fields for next TE
         self.next_TE_id += 1
         self.length += length
-        # return TE_ID
+        return TE_ID
 
     def disable_te(self, te: int) -> None:
         """
