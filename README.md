@@ -101,5 +101,13 @@ You are free to implement the genome classes however you want, and using whateer
 When you have implemented the two (or more) classes, describe the complexity of each operation as a function of the genome size (at the time of the operation), and the size of the TE involved (and when copying, the offset you are copying). Put the description here:
 
 **FIXME: OPERATION COMPLEXITY**
+The big difference in the complexety of arrays and linked lists is the reversed relationship they have in indexing and insertion/deletion operations.
+
+indexing into an array is possible in constant time, however inserting into it requiers recomputing the indicies with is done in linear time.
+
+The opposite is true for linked lists where indexing into it is done in linear time but inserting and deleting from it is done in constant time.
+
+of course this is in regards to single inserts and indexes. in the current implementation we insert TE's nucleotide by nucleotide. the linked lists could very well be improved by inserting the entire TE at once. ie. merging two linked lists.
+
 
 In `src/simulate.py` you will find a program that can run simulations and tell you actual time it takes to simulate with different implementations. You can use it to test your analysis. You can modify the parameters to the simulator if you want to explore how they affect the running time.
